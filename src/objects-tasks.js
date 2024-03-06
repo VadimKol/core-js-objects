@@ -430,10 +430,9 @@ class MySuperBaseElementSelector {
         'Element, id and pseudo-element should not occur more then one time inside the selector'
       );
     if (
-      this.selector.length > 0 &&
-      (this.selector.includes('.') ||
-        this.selector.includes('[') ||
-        this.selector.includes(':'))
+      this.selector.includes('.') ||
+      this.selector.includes('[') ||
+      this.selector.includes(':')
     )
       throw new Error(
         'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
@@ -443,10 +442,7 @@ class MySuperBaseElementSelector {
   }
 
   class(value) {
-    if (
-      this.selector.length > 0 &&
-      (this.selector.includes('[') || this.selector.includes(':'))
-    )
+    if (this.selector.includes('[') || this.selector.includes(':'))
       throw new Error(
         'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
       );
@@ -455,7 +451,7 @@ class MySuperBaseElementSelector {
   }
 
   attr(value) {
-    if (this.selector.length > 0 && this.selector.includes(':'))
+    if (this.selector.includes(':'))
       throw new Error(
         'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
       );
@@ -464,7 +460,7 @@ class MySuperBaseElementSelector {
   }
 
   pseudoClass(value) {
-    if (this.selector.length > 0 && this.selector.includes('::'))
+    if (this.selector.includes('::'))
       throw new Error(
         'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
       );
