@@ -378,33 +378,6 @@ function group(array, keySelector, valueSelector) {
 class MySuperBaseElementSelector {
   selector = '';
 
-  constructor(method, value, combinator, selector2) {
-    switch (method) {
-      case 'element':
-        this.selector += value;
-        break;
-      case 'id':
-        this.selector += `#${value}`;
-        break;
-      case 'class':
-        this.selector += `.${value}`;
-        break;
-      case 'attr':
-        this.selector += `[${value}]`;
-        break;
-      case 'pseudoClass':
-        this.selector += `:${value}`;
-        break;
-      case 'pseudoElement':
-        this.selector += `::${value}`;
-        break;
-      case 'combine':
-        this.selector += `${value.stringify()} ${combinator} ${selector2.stringify()}`;
-        break;
-      default:
-    }
-  }
-
   element(value) {
     if (
       this.selector.length > 0 &&
@@ -489,32 +462,31 @@ class MySuperBaseElementSelector {
 
 const cssSelectorBuilder = {
   element(value) {
-    return new MySuperBaseElementSelector('element', value);
+    return new MySuperBaseElementSelector().element(value);
   },
 
   id(value) {
-    return new MySuperBaseElementSelector('id', value);
+    return new MySuperBaseElementSelector().id(value);
   },
 
   class(value) {
-    return new MySuperBaseElementSelector('class', value);
+    return new MySuperBaseElementSelector().class(value);
   },
 
   attr(value) {
-    return new MySuperBaseElementSelector('attr', value);
+    return new MySuperBaseElementSelector().attr(value);
   },
 
   pseudoClass(value) {
-    return new MySuperBaseElementSelector('pseudoClass', value);
+    return new MySuperBaseElementSelector().pseudoClass(value);
   },
 
   pseudoElement(value) {
-    return new MySuperBaseElementSelector('pseudoElement', value);
+    return new MySuperBaseElementSelector().pseudoElement(value);
   },
 
   combine(selector1, combinator, selector2) {
-    return new MySuperBaseElementSelector(
-      'combine',
+    return new MySuperBaseElementSelector().combine(
       selector1,
       combinator,
       selector2
