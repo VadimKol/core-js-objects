@@ -307,8 +307,8 @@ function group(array, keySelector, valueSelector) {
   let curValue = '';
 
   keys.forEach((key) => {
-    array.forEach((z) => {
-      Object.values(z).forEach((v) => {
+    array.forEach((obj) => {
+      Object.values(obj).forEach((v) => {
         if (curValue !== '' && arrayValues.includes(v)) {
           values.push(v);
           groupedMap.set(key, Array.from(values));
@@ -375,34 +375,154 @@ function group(array, keySelector, valueSelector) {
  *
  *  For more examples see unit tests.
  */
+class MySuperBaseElementSelector {
+  selector = '';
+
+  constructor(method, value, combinator, selector2) {
+    switch (method) {
+      case 'element':
+        this.selector += value;
+        break;
+      case 'id':
+        this.selector += `#${value}`;
+        break;
+      case 'class':
+        this.selector += `.${value}`;
+        break;
+      case 'attr':
+        this.selector += `[${value}]`;
+        break;
+      case 'pseudoClass':
+        this.selector += `:${value}`;
+        break;
+      case 'pseudoElement':
+        this.selector += `::${value}`;
+        break;
+      case 'combine':
+        this.selector += `${value.stringify()} ${combinator} ${selector2.stringify()}`;
+        break;
+      default:
+    }
+  }
+
+  element(value) {
+    if (
+      this.selector.length > 0 &&
+      !this.selector.includes('#') &&
+      !this.selector.includes('.') &&
+      !this.selector.includes('[') &&
+      !this.selector.includes(':')
+    )
+      throw new Error(
+        'Element, id and pseudo-element should not occur more then one time inside the selector'
+      );
+    if (this.selector.length > 0)
+      throw new Error(
+        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
+      );
+    this.selector += value;
+    return this;
+  }
+
+  id(value) {
+    if (this.selector.includes('#'))
+      throw new Error(
+        'Element, id and pseudo-element should not occur more then one time inside the selector'
+      );
+    if (
+      this.selector.length > 0 &&
+      (this.selector.includes('.') ||
+        this.selector.includes('[') ||
+        this.selector.includes(':'))
+    )
+      throw new Error(
+        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
+      );
+    this.selector += `#${value}`;
+    return this;
+  }
+
+  class(value) {
+    if (
+      this.selector.length > 0 &&
+      (this.selector.includes('[') || this.selector.includes(':'))
+    )
+      throw new Error(
+        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
+      );
+    this.selector += `.${value}`;
+    return this;
+  }
+
+  attr(value) {
+    if (this.selector.length > 0 && this.selector.includes(':'))
+      throw new Error(
+        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
+      );
+    this.selector += `[${value}]`;
+    return this;
+  }
+
+  pseudoClass(value) {
+    if (this.selector.length > 0 && this.selector.includes('::'))
+      throw new Error(
+        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
+      );
+    this.selector += `:${value}`;
+    return this;
+  }
+
+  pseudoElement(value) {
+    if (this.selector.includes('::'))
+      throw new Error(
+        'Element, id and pseudo-element should not occur more then one time inside the selector'
+      );
+    this.selector += `::${value}`;
+    return this;
+  }
+
+  combine(selector1, combinator, selector2) {
+    this.selector += `${selector1.stringify()} ${combinator} ${selector2.stringify()}`;
+    return this;
+  }
+
+  stringify() {
+    return this.selector;
+  }
+}
 
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  element(value) {
+    return new MySuperBaseElementSelector('element', value);
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  id(value) {
+    return new MySuperBaseElementSelector('id', value);
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  class(value) {
+    return new MySuperBaseElementSelector('class', value);
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  attr(value) {
+    return new MySuperBaseElementSelector('attr', value);
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  pseudoClass(value) {
+    return new MySuperBaseElementSelector('pseudoClass', value);
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  pseudoElement(value) {
+    return new MySuperBaseElementSelector('pseudoElement', value);
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  combine(selector1, combinator, selector2) {
+    return new MySuperBaseElementSelector(
+      'combine',
+      selector1,
+      combinator,
+      selector2
+    );
   },
 };
 
