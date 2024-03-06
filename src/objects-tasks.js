@@ -40,7 +40,6 @@ function mergeObjects(objects) {
     Object.entries(obj).forEach(([key, value]) => {
       if (flatObj[key]) flatObj[key] += value;
       else flatObj[key] = value;
-      return flatObj[key];
     });
   });
   return flatObj;
@@ -61,14 +60,12 @@ function mergeObjects(objects) {
  */
 function removeProperties(obj, keys) {
   const copyObj = obj;
-  if (typeof keys === 'string') {
-    if (keys in copyObj) delete copyObj[keys];
-  } else {
+  if (typeof keys === 'string' && keys in copyObj) delete copyObj[keys];
+  else
     keys.forEach((key) => {
       if (key in copyObj) delete copyObj[key];
-      return key;
     });
-  }
+
   return copyObj;
 }
 
