@@ -60,11 +60,8 @@ function mergeObjects(objects) {
  */
 function removeProperties(obj, keys) {
   const copyObj = obj;
-  if (typeof keys === 'string' && keys in copyObj) delete copyObj[keys];
-  else
-    keys.forEach((key) => {
-      if (key in copyObj) delete copyObj[key];
-    });
+  if (typeof keys === 'string') delete copyObj[keys];
+  else keys.forEach((key) => delete copyObj[key]);
 
   return copyObj;
 }
