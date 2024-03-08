@@ -375,83 +375,61 @@ function group(array, keySelector, valueSelector) {
  *
  *  For more examples see unit tests.
  */
+const ElementSelector = require('./element');
+const IdSelector = require('./id');
+const ClassSelector = require('./class');
+const AttrSelector = require('./attr');
+const PseudoClassSelector = require('./pseudoclass');
+const PseudoElementSelector = require('./pseudoelement');
+const CombineSelector = require('./combine');
+
 class MySuperBaseElementSelector {
   selector = '';
 
   element(value) {
-    if (
-      this.selector.length > 0 &&
-      !this.selector.includes('#') &&
-      !this.selector.includes('.') &&
-      !this.selector.includes('[') &&
-      !this.selector.includes(':')
-    )
-      throw new Error(
-        'Element, id and pseudo-element should not occur more then one time inside the selector'
-      );
-    if (this.selector.length > 0)
-      throw new Error(
-        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
-      );
-    this.selector += value;
+    const obj = new ElementSelector();
+    this.selector = obj.addSelector(value, this.selector);
     return this;
   }
 
   id(value) {
-    if (this.selector.includes('#'))
-      throw new Error(
-        'Element, id and pseudo-element should not occur more then one time inside the selector'
-      );
-    if (
-      this.selector.includes('.') ||
-      this.selector.includes('[') ||
-      this.selector.includes(':')
-    )
-      throw new Error(
-        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
-      );
-    this.selector += `#${value}`;
+    const obj = new IdSelector();
+    this.selector = obj.addSelector(value, this.selector);
     return this;
   }
 
   class(value) {
-    if (this.selector.includes('[') || this.selector.includes(':'))
-      throw new Error(
-        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
-      );
-    this.selector += `.${value}`;
+    const obj = new ClassSelector();
+    this.selector = obj.addSelector(value, this.selector);
     return this;
   }
 
   attr(value) {
-    if (this.selector.includes(':'))
-      throw new Error(
-        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
-      );
-    this.selector += `[${value}]`;
+    const obj = new AttrSelector();
+    this.selector = obj.addSelector(value, this.selector);
     return this;
   }
 
   pseudoClass(value) {
-    if (this.selector.includes('::'))
-      throw new Error(
-        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
-      );
-    this.selector += `:${value}`;
+    const obj = new PseudoClassSelector();
+    this.selector = obj.addSelector(value, this.selector);
     return this;
   }
 
   pseudoElement(value) {
-    if (this.selector.includes('::'))
-      throw new Error(
-        'Element, id and pseudo-element should not occur more then one time inside the selector'
-      );
-    this.selector += `::${value}`;
+    const obj = new PseudoElementSelector();
+    this.selector = obj.addSelector(value, this.selector);
     return this;
   }
 
   combine(selector1, combinator, selector2) {
-    this.selector += `${selector1.stringify()} ${combinator} ${selector2.stringify()}`;
+    const obj = new CombineSelector();
+    this.selector = obj.addSelector(
+      selector1,
+      combinator,
+      selector2,
+      this.selector
+    );
     return this;
   }
 
